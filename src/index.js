@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "./logo.svg";
+
 import {
   ApolloClient,
   InMemoryCache,
@@ -8,9 +8,11 @@ import {
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { gql, useMutation } from "@apollo/client";
+import "./styles/index.css";
 import ReactDOM from "react-dom";
+import "./styles/index.css";
 import { loadStripe } from "@stripe/stripe-js";
-import { PayButton, Wrapper } from "./styles";
+import { Container, Typography, CssBaseline, Button } from "@material-ui/core";
 import {
   CardElement,
   Elements,
@@ -32,6 +34,24 @@ const PAYMENT_CONFIRMATION = gql`
 `;
 
 const CheckoutForm = ({ uuidTrip, totalAmount }) => {
+  const createOptions = () => {
+    return {
+      style: {
+        base: {
+          fontSize: "16px",
+          color: "#424770",
+          fontFamily: "Open Sans, sans-serif",
+          letterSpacing: "0.025em",
+          "::placeholder": {
+            color: "#aab7c4",
+          },
+        },
+        invalid: {
+          color: "#c23d4b",
+        },
+      },
+    };
+  };
   const [PayOrConfirm, { called, error }] = useMutation(PAYMENT_CONFIRMATION, {
     errorPolicy: "all",
   });
@@ -47,6 +67,11 @@ const CheckoutForm = ({ uuidTrip, totalAmount }) => {
       card: elements.getElement(CardElement),
     });
   };
+  const handleChange = ({ error }) => {
+    if (error) {
+      this.setState({ errorMessage: error.message });
+    }
+  };
   /* if (error)
     return (
       <p>
@@ -58,29 +83,97 @@ const CheckoutForm = ({ uuidTrip, totalAmount }) => {
     return <p>Page not available</p>; */
   return (
     <form onSubmit={handleSubmit}>
-      <Wrapper>
-        <CardElement />
-      </Wrapper>
+      <CssBaseline />
+      <div className="header">
+        <Typography
+          style={{
+            /* backgroundColor: "#cfe8fc", */
+            alignSelf: "flex-start",
+            color: "white",
+          }}
+          variant="h4"
+          component="h1"
+        >
+          Payment
+        </Typography>
+      </div>
+      <Container maxWidth="sm">
+        <Typography
+          component="div"
+          style={{
+            /* backgroundColor: "#cfe8fc", */
+            height: "50vh",
+            justifyContent: "space-between",
+            flexDirection: "column",
+            alignItems: "center",
+            marginTop: "15%",
+          }}
+        >
+          <Typography variant="h6" component="h2" gutterBottom>
+            Details
+          </Typography>
 
-      <PayButton
-        onClick={() => {
-          try {
-            PayOrConfirm({
-              variables: {
-                uuidTrip: uuidTrip,
-                totalAmount: totalAmount,
-                paymentMethod: "Card",
+          <div id="main">
+            <Typography variant="h8" gutterBottom>
+              Name :{" "}
+            </Typography>
+            <Typography display="initial" align="center" variant="h8">
+              {" "}
+              John Doe
+            </Typography>
+          </div>
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          Card details
+        </Typography>
+        <div class="cardElement">
+          <CardElement
+            hidePostalCode
+            options={{
+              style: {
+                base: {
+                  fontSize: "24px",
+                  color: "#424770",
+                  fontFamily: "Open Sans, sans-serif",
+                  letterSpacing: "0.025em",
+                  "::placeholder": {
+                    color: "#aab7c4",
+                  },
+                },
+                invalid: {
+                  color: "#c23d4b",
+                },
               },
-            }); /* window.close()  */
-          } catch (err) {
-            alert("Error has occured");
-          }
-        }}
-        type="submit"
-        disabled={!stripe || called ? true : false}
-      >
-        Pay
-      </PayButton>
+            }}
+            onChange={() => handleChange()}
+          />
+        </div>
+
+        <div class="buttonHolder">
+          <Button
+            disabled={!stripe || called ? true : false}
+            onClick={() => {
+              try {
+                PayOrConfirm({
+                  variables: {
+                    uuidTrip: uuidTrip,
+                    totalAmount: totalAmount,
+                    paymentMethod: "Card",
+                  },
+                }); /* window.close()  */
+              } catch (err) {
+                alert("Error has occured");
+              }
+            }}
+            style={{ width: "70%" }}
+            size="large"
+            variant="contained"
+            color="primary"
+          >
+            Pay
+          </Button>
+        </div>
+      </Container>
     </form>
   );
 };
