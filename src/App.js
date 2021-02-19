@@ -1,7 +1,6 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
-import Checkout from "./Checkout";
 import {
   ApolloClient,
   InMemoryCache,
@@ -25,7 +24,6 @@ export const PAYMENT_CONFIRMATION = gql`
 `;
 function App({ uuidTrip, totalAmount }) {
   const [PayOrConfirm, { called }] = useMutation(PAYMENT_CONFIRMATION);
-  React.useEffect(() => {}, [called]);
   console.log(uuidTrip, totalAmount, called);
 
   return (
