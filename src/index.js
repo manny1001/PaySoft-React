@@ -69,23 +69,41 @@ const CheckoutForm = ({ uuidTrip, totalAmount }) => {
         <Typography
           style={{
             /* backgroundColor: "#cfe8fc", */
-            alignSelf: "flex-start",
+
             color: "white",
           }}
           variant="h4"
           component="h1"
-        >
-          Payment
-        </Typography>
+        ></Typography>
       </div>
       <Container maxWidth="sm">
-        <div class="buttonHolder">
-          <form
-            action="{http://localhost:4000/graphql}"
-            class="paymentWidgets"
-            data-brands="VISA MASTER AMEX"
-          ></form>
-
+        <div class="box effect2">
+          <div class="buttonHolder">
+            <Typography style={{ color: "white" }} variant="h5" component="h2">
+              Trippy Driver
+            </Typography>
+            <Typography style={{ color: "white" }} variant="h6" component="h5">
+              Total : R85
+            </Typography>
+            <form
+              action="https://peachpayments.docs.oppwa.com/tutorials/integration-guide/customisation"
+              class="paymentWidgets"
+              data-brands="VISA MASTER AMEX"
+            ></form>
+          </div>
+          <Typography
+            style={{
+              color: "white",
+              fontWeight: "100",
+              fontSize: 12,
+              margin: 40,
+            }}
+            variant="h8"
+            component="h2"
+          >
+            *By proceeding with the pament you agree to our Terms and
+            conditions.
+          </Typography>
           {/* <Button
             disabled={called ? true : false}
             onClick={() => {
