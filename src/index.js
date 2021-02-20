@@ -11,14 +11,8 @@ import { gql, useMutation } from "@apollo/client";
 import "./styles/index.css";
 import ReactDOM from "react-dom";
 import "./styles/index.css";
-import { loadStripe } from "@stripe/stripe-js";
 import { Container, Typography, CssBaseline, Button } from "@material-ui/core";
-import {
-  CardElement,
-  Elements,
-  useStripe,
-  useElements,
-} from "@stripe/react-stripe-js";
+
 const PAYMENT_CONFIRMATION = gql`
   mutation PayOrConfirm(
     $uuidTrip: String
@@ -55,23 +49,10 @@ const CheckoutForm = ({ uuidTrip, totalAmount }) => {
   const [PayOrConfirm, { called, error }] = useMutation(PAYMENT_CONFIRMATION, {
     errorPolicy: "all",
   });
-  console.log(uuidTrip, totalAmount, called, error && error.graphQLErrors);
+  /*   console.log(uuidTrip, totalAmount, called, error && error.graphQLErrors); */
 
-  const stripe = useStripe();
-  const elements = useElements();
+  const handleSubmit = async (event) => {};
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: "card",
-      card: elements.getElement(CardElement),
-    });
-  };
-  const handleChange = ({ error }) => {
-    if (error) {
-      this.setState({ errorMessage: error.message });
-    }
-  };
   /* if (error)
     return (
       <p>
@@ -98,60 +79,15 @@ const CheckoutForm = ({ uuidTrip, totalAmount }) => {
         </Typography>
       </div>
       <Container maxWidth="sm">
-        <Typography
-          component="div"
-          style={{
-            /* backgroundColor: "#cfe8fc", */
-            height: "50vh",
-            justifyContent: "space-between",
-            flexDirection: "column",
-            alignItems: "center",
-            marginTop: "15%",
-          }}
-        >
-          <Typography variant="h6" component="h2" gutterBottom>
-            Details
-          </Typography>
-
-          <div id="main">
-            <Typography variant="h8" gutterBottom>
-              Name :{" "}
-            </Typography>
-            <Typography display="initial" align="center" variant="h8">
-              {" "}
-              John Doe
-            </Typography>
-          </div>
-        </Typography>
-        <Typography variant="h6" gutterBottom>
-          Card details
-        </Typography>
-        <div class="cardElement">
-          <CardElement
-            hidePostalCode
-            options={{
-              style: {
-                base: {
-                  fontSize: "24px",
-                  color: "#424770",
-                  fontFamily: "Open Sans, sans-serif",
-                  letterSpacing: "0.025em",
-                  "::placeholder": {
-                    color: "#aab7c4",
-                  },
-                },
-                invalid: {
-                  color: "#c23d4b",
-                },
-              },
-            }}
-            onChange={() => handleChange()}
-          />
-        </div>
-
         <div class="buttonHolder">
-          <Button
-            disabled={!stripe || called ? true : false}
+          <form
+            action="{http://localhost:4000/graphql}"
+            class="paymentWidgets"
+            data-brands="VISA MASTER AMEX"
+          ></form>
+
+          {/* <Button
+            disabled={called ? true : false}
             onClick={() => {
               try {
                 PayOrConfirm({
@@ -160,7 +96,8 @@ const CheckoutForm = ({ uuidTrip, totalAmount }) => {
                     totalAmount: totalAmount,
                     paymentMethod: "Card",
                   },
-                }); /* window.close()  */
+                });
+                window.close();
               } catch (err) {
                 alert("Error has occured");
               }
@@ -171,14 +108,12 @@ const CheckoutForm = ({ uuidTrip, totalAmount }) => {
             color="primary"
           >
             Pay
-          </Button>
+          </Button> */}
         </div>
       </Container>
     </form>
   );
 };
-
-const stripePromise = loadStripe("pk_test_6pRNASCoBOKtIshFeQd4XMUh");
 
 const App = () => {
   const [token, setToken] = React.useState(null);
@@ -211,9 +146,7 @@ const App = () => {
   });
   return (
     <ApolloProvider client={client}>
-      <Elements stripe={stripePromise}>
-        <CheckoutForm uuidTrip={uuidTrip} totalAmount={totalAmount} />
-      </Elements>
+      <CheckoutForm uuidTrip={uuidTrip} totalAmount={totalAmount} />
     </ApolloProvider>
   );
 };
