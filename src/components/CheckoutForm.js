@@ -1,20 +1,8 @@
-import React, { Suspense, lazy } from "react";
-/* import React, { lazy } from "react"; */
+import React, { lazy } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { Container, Typography, CssBaseline, Button } from "@material-ui/core";
-import {
-  ApolloClient,
-  InMemoryCache,
-  createHttpLink,
-  ApolloProvider,
-} from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
-import "./styles/index.css";
-import ReactDOM from "react-dom";
-import "./styles/index.css";
-import Loader from "./components/Loader";
-/* import PaymentForm from "./components/PaymentForm"; */
-const PaymentForm = lazy(() => import("./components/PaymentForm"));
+
+import PaymentForm from "./PaymentForm";
 const PAYMENT_CONFIRMATION = gql`
   mutation PayOrConfirm(
     $uuidTrip: String
@@ -28,8 +16,6 @@ const PAYMENT_CONFIRMATION = gql`
     )
   }
 `;
-
-/* const CheckoutForm = lazy(() => import("./components/CheckoutForm")); */
 
 export const CheckoutForm = ({ uuidTrip, totalAmount }) => {
   const createOptions = () => {
@@ -133,49 +119,3 @@ export const CheckoutForm = ({ uuidTrip, totalAmount }) => {
     </form>
   );
 };
-
-const App = () => {
-  const [token, setToken] = React.useState(null);
-  const [uuidTrip, setuuidTrip] = React.useState(null);
-  const [totalAmount, settotalAmount] = React.useState(null);
-  const [paymentID, setpaymentID] = React.useState(null);
-  document.addEventListener("DOMContentLoaded", function (event) {
-    var token = decodeURIComponent(document.location).split("?")[1];
-    var totalAmount = decodeURIComponent(document.location).split("?")[2];
-    var uuidTrip = decodeURIComponent(document.location).split("?")[3];
-    /*  var paymentID = decodeURIComponent(document.location).split("?")[4]; */
-    settotalAmount(totalAmount);
-    setuuidTrip(uuidTrip);
-    setToken(token);
-    /* setpaymentID(paymentID); */
-  });
-
-  /*  const httpLink = createHttpLink({
-    uri: "https://agile-woodland-33090.herokuapp.com/",
-  }); */
-  const httpLink = createHttpLink({
-    uri: "http://localhost:22000/graphql",
-  });
-  const authLink = setContext(async (_, { headers }) => {
-    return {
-      headers: {
-        ...headers,
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-    };
-  });
-  const client = new ApolloClient({
-    link: authLink.concat(httpLink),
-    cache: new InMemoryCache(),
-    credentials: "same-origin",
-  });
-  return (
-    <Suspense fallback={Loader()}>
-      <ApolloProvider client={client}>
-        <CheckoutForm uuidTrip={uuidTrip} totalAmount={totalAmount} />
-      </ApolloProvider>
-    </Suspense>
-  );
-};
-
-ReactDOM.render(<App />, document.body);
